@@ -11,6 +11,8 @@ import { CSG } from '../libs/other/CSGMesh.js'
 import { OrbitControls } from '../build/jsm/controls/OrbitControls.js';
 import { OBJLoader } from '../build/jsm/loaders/OBJLoader.js';
 import { MTLLoader } from '../build/jsm/loaders/MTLLoader.js';
+import { Buttons } from "../libs/other/buttons.js";        
+
 
 // Inicialização de variáveis importantes
 let scene, renderer, light, cameraPerspective, startTime, currentTime; // Variáveis iniciais
@@ -47,6 +49,12 @@ const skyboxTexture = textureLoader.load([
 var textureLoader2 = new THREE.TextureLoader();
 var tile = textureLoader2.load('tijolo.jpg');
 var orange = textureLoader2.load('texture_orange.jpeg');
+
+//botões
+var buttons = new Buttons(onButtonDown, onButtonUp);
+
+var pressedA = false;        
+var pressedB = false;
 
 scene = new THREE.Scene(); // Cria a cena principal
 // Configure a cena para usar a textura da skybox como fundo
@@ -1416,4 +1424,20 @@ function fixPosition(obj) {
   else
     obj.translateY(-1 * box.min.y);
   return obj;
+}
+
+function onButtonDown(event) {
+  switch(event.target.id)
+  {
+    case "A":
+      pressedA = true;
+    break;    
+    case "full":
+      buttons.setFullScreen();
+    break;    
+  }
+}
+
+function onButtonUp(event) {
+  pressedA = pressedB = false;
 }
