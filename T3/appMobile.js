@@ -9,8 +9,8 @@ import * as THREE from "three";
 import { initRenderer, setDefaultMaterial, initDefaultBasicLight, SecondaryBox, getMaxSize } from "../libs/util/util.js";
 import { CSG } from '../libs/other/CSGMesh.js'
 import { OrbitControls } from '../build/jsm/controls/OrbitControls.js';
-import {OBJLoader} from '../build/jsm/loaders/OBJLoader.js';
-import {MTLLoader} from '../build/jsm/loaders/MTLLoader.js';
+import { OBJLoader } from '../build/jsm/loaders/OBJLoader.js';
+import { MTLLoader } from '../build/jsm/loaders/MTLLoader.js';
 
 // Inicialização de variáveis importantes
 let scene, renderer, light, cameraPerspective, startTime, currentTime; // Variáveis iniciais
@@ -18,19 +18,18 @@ let scene, renderer, light, cameraPerspective, startTime, currentTime; // Variá
 let assetManager = {
   // Properties
   spaceship: null,
-  allLoaded: false, 
-  // Functions 
-  checkLoaded : function() {
-     if(!this.allLoaded)
-     {
-        if(this.spaceship){
-            this.allLoaded = true;
-            //loadingMessage.hide(); 
-        }
-     }
-  },   
-  hideAll : function() {
-     this.spaceship.visible = false;
+  allLoaded: false,
+  // Functions
+  checkLoaded: function () {
+    if (!this.allLoaded) {
+      if (this.spaceship) {
+        this.allLoaded = true;
+        //loadingMessage.hide();
+      }
+    }
+  },
+  hideAll: function () {
+    this.spaceship.visible = false;
   }
 }
 
@@ -56,7 +55,7 @@ renderer = initRenderer(); // Inicializa o renderizador (função em util/utils)
 light = initDefaultBasicLight(scene); // Cria uma luz básica para iluminar a cena
 
 const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5); // Cor branca, intensidade 0.5
-directionalLight.position.set(0, -20, 20); // Defina a posição da luz
+directionalLight?.position.set(0, -20, 20); // Defina a posição da luz
 directionalLight.castShadow = true;
 scene.add(directionalLight); // Adicione a luz à cena
 
@@ -90,7 +89,7 @@ cameraPerspective = new THREE.PerspectiveCamera(
   0.1,
   1000
 );
-cameraPerspective.position.set(0, -20, 20);
+cameraPerspective?.position.set(0, -20, 20);
 cameraPerspective.lookAt(0, 0, 0);
 
 function onWindowResize(camera, renderer) {
@@ -217,8 +216,23 @@ function processBallMovement() {
     restartGame();
   }
   else if (cont == 0 && nivel == 2) {
+    nivel = 3;
+    rows = 11;
+    columns = 11;
+    cont = 69;
+    bricksInfo = new Array(rows);
+
+    for (var i = 0; i < rows; i++) {
+      bricksInfo[i] = new Array(columns);
+    }
+    //fim de jogo
+
     isPaused = true;
-    //finalizarJogo();
+    restartGame();
+  }
+  else if (cont == 8 && nivel == 3) {
+    isPaused = true;
+    finalizarJogo();
   }
   // Se a bola não estiver em movimento, inicia o movimento
   if (!ball.$velocity) {
@@ -248,7 +262,7 @@ function processBallMovement() {
   }
 
   if (canCollideWithHitter && isHitterGSCCollision()) { //normal calculada pela diferença da posição da colisão e o centro do cilindro
-    var normal = new THREE.Vector2(ball.position.x - hitter.position.x, ball.position.y + 10.5)
+    var normal = new THREE.Vector2(ball?.position.x - hitter?.position.x, ball?.position.y + 10.5)
     var norm = Math.sqrt(normal.x * normal.x + normal.y * normal.y);//na normal sai um vetor que não tem norma 1, com isso vc usa a normalização
     //vira a normal pra valer
     normal.x /= norm;
@@ -263,7 +277,7 @@ function processBallMovement() {
 
   if (secondBall) {
     if (can2CollideWithHitter && isHitter2GSCCollision()) {
-      var normal = new THREE.Vector2(secondBall.position.x - hitter.position.x, secondBall.position.y + 10.5);
+      var normal = new THREE.Vector2(secondBall?.position.x - hitter?.position.x, secondBall?.position.y + 10.5);
       var norm = Math.sqrt(normal.x * normal.x + normal.y * normal.y);
       normal.x /= norm;
       normal.y /= norm;
@@ -292,7 +306,7 @@ function processBallMovement() {
   // Verifica se a bola passou pelo rebatedor
   if (isPastHitter()) {
     if (!secondBall) {
-      ball.position.set(hitter.position.x, ball_pos_y, 0.2);
+      ball?.position.set(hitter?.position.x, ball_pos_y, 0.2);
       ball.$velocity = null;
       scene.remove(powerUp);
       powerUp = null;
@@ -352,9 +366,8 @@ function processBallMovement() {
                 }, 100);
               }
             }
-
             //som 2
-            if (bricksInfo[i][j].hits === 1) { playCollision2Sound(); }
+            if (bricksInfo[i][j].hits === 1 || bricksInfo[i][j].color === 16554040) { playCollision2Sound(); }
             if (remove) {
               // Remove o tijolo da cena
               cont--;
@@ -414,7 +427,7 @@ function createSecondBallWithDifferentDirection() {
   });
   secondBall = new THREE.Mesh(secondBallGeometry, secondBallMaterial);
   secondBall.castShadow = true;
-  secondBall.position.set(ball.position.x, ball.position.y, 0.2); // Posicione a segunda bola na posição da primeira
+  secondBall?.position.set(ball?.position.x, ball?.position.y, 0.2); // Posicione a segunda bola na posição da primeira
   bbSecondBall = new THREE.Box3().setFromObject(secondBall);
   scene.add(secondBall);
 
@@ -435,19 +448,19 @@ function createSecondBallWithDifferentDirection() {
 //função que atualiza a função da bola
 function updateBallPosition() {
   if (ball) {
-    var ballPos = ball.position;
+    var ballPos = ball?.position;
     ballPos.x += ball.$velocity.x;
     ballPos.y += ball.$velocity.y;
     bbBall.setFromObject(ball);
   }
   if (secondBall) {
-    var secondBallPos = secondBall.position;
+    var secondBallPos = secondBall?.position;
     secondBallPos.x += secondBall.$velocity.x;
     secondBallPos.y += secondBall.$velocity.y;
     bbSecondBall.setFromObject(secondBall);
   }
   if (powerUp) {
-    var powerUpPos = powerUp.position;
+    var powerUpPos = powerUp?.position;
     powerUpPos.y -= powerUp.$velocity.y;
   }
 }
@@ -455,7 +468,7 @@ function updateBallPosition() {
 //função que verifica a colisão na lateral
 function isSideCollision() {
   if (ball) {
-    var ballX = ball.position.x,
+    var ballX = ball?.position.x,
       halfFieldWidth = field_w / 2;
     //verifica se a borda da bola passou pela lateral do campo
     return ballX - ball_radius < -halfFieldWidth || ballX + ball_radius > halfFieldWidth;
@@ -463,7 +476,7 @@ function isSideCollision() {
 }
 function isSide2Collision() {
   if (secondBall) {
-    var secondBallX = secondBall.position.x,
+    var secondBallX = secondBall?.position.x,
       halfFieldWidth = field_w / 2;
     //verifica se a borda da bola passou pela lateral do campo
     return secondBallX - ball_radius < -halfFieldWidth || secondBallX + ball_radius > halfFieldWidth;
@@ -473,7 +486,7 @@ function isSide2Collision() {
 //função que verifica a colisão no topo
 function isTopCollision() {
   if (ball) {
-    var ballY = ball.position.y,
+    var ballY = ball?.position.y,
       halfFieldLength = field_h / 2;
     //verifica se a borda da bola passou pelo topo do campo
     return ballY + ball_radius > halfFieldLength;
@@ -481,7 +494,7 @@ function isTopCollision() {
 }
 function isTop2Collision() {
   if (secondBall) {
-    var secondBallY = secondBall.position.y,
+    var secondBallY = secondBall?.position.y,
       halfFieldLength = field_h / 2;
     //verifica se a borda da bola passou pelo topo do campo
     return secondBallY + ball_radius > halfFieldLength;
@@ -498,15 +511,15 @@ function isHitter2GSCCollision() {
 
 function isPowerAlignedWithPaddle() {
   var halfPaddleWidth = hitter_w / 2,
-    paddleX = hitter.position.x,
-    ballX = powerUp.position.x;
+    paddleX = hitter?.position.x,
+    ballX = powerUp?.position.x;
   return ballX > paddleX - halfPaddleWidth && ballX < paddleX + halfPaddleWidth;
 }
 function isPowerHitterCollision() {
   if (powerUp) {
     return (
-      powerUp.position.y - ball_radius <= hitter.position.y &&
-      powerUp.position.y - ball_radius >= hitter.position.y - 0.2 &&
+      powerUp?.position.y - ball_radius <= hitter?.position.y &&
+      powerUp?.position.y - ball_radius >= hitter?.position.y - 0.2 &&
       isPowerAlignedWithPaddle()
     );
   }
@@ -516,19 +529,19 @@ function isPowerHitterCollision() {
 function isPastHitter() {
   if (ball) {
     //velocity = initialVelocity // Volta a velocidade
-    return ball.position.y < hitter.position.y - 0.4;
+    return ball?.position.y < hitter?.position.y - 0.4;
   }
 }
 
 function is2PastHitter() {
   if (secondBall) {
-    return secondBall.position.y < hitter.position.y - 0.4;
+    return secondBall?.position.y < hitter?.position.y - 0.4;
   }
 }
 
 function isPowerPastHitter() {
   if (powerUp) {
-    return powerUp.position.y < hitter.position.y - 0.4;
+    return powerUp?.position.y < hitter?.position.y - 0.4;
   }
 }
 
@@ -540,10 +553,10 @@ function isBrickCollision(brick) {
     // Reinicie a contagem de blocos removidos.
     blocksRemoved = 0;
   }
-  var ballX = ball.position.x;
-  var ballY = ball.position.y;
-  var brickX = brick.position.x;
-  var brickY = brick.position.y;
+  var ballX = ball?.position.x;
+  var ballY = ball?.position.y;
+  var brickX = brick?.position.x;
+  var brickY = brick?.position.y;
 
   var halfBrickWidth = brick.geometry.parameters.width / 2;
   var halfBrickHeight = brick.geometry.parameters.height / 2;
@@ -609,10 +622,10 @@ function is2BrickCollision(brick) {
     // Reinicie a contagem de blocos removidos.
     blocksRemoved2 = 0;
   }
-  var ballX = secondBall.position.x;
-  var ballY = secondBall.position.y;
-  var brickX = brick.position.x;
-  var brickY = brick.position.y;
+  var ballX = secondBall?.position.x;
+  var ballY = secondBall?.position.y;
+  var brickX = brick?.position.x;
+  var brickY = brick?.position.y;
 
   var halfBrickWidth = brick.geometry.parameters.width / 2;
   var halfBrickHeight = brick.geometry.parameters.height / 2;
@@ -670,10 +683,10 @@ function is2BrickCollision(brick) {
 
 // Função para verificar colisão com a parte superior ou inferior do tijolo
 function isBottonTopBrickCollision(brick) {
-  var ballX = ball.position.x;
-  var ballY = ball.position.y;
-  var brickX = brick.position.x;
-  var brickY = brick.position.y;
+  var ballX = ball?.position.x;
+  var ballY = ball?.position.y;
+  var brickX = brick?.position.x;
+  var brickY = brick?.position.y;
 
   var halfBrickWidth = brick.geometry.parameters.width / 2;
   var halfBrickHeight = brick.geometry.parameters.height / 2;
@@ -688,10 +701,10 @@ function isBottonTopBrickCollision(brick) {
     var topRight = new THREE.Vector2(brickX + halfBrickWidth, brickY - halfBrickHeight);
     var bottonLeft = new THREE.Vector2(brickX - halfBrickWidth, brickY + halfBrickHeight);
     var bottonRight = new THREE.Vector2(brickX + halfBrickWidth, brickY + halfBrickHeight);
-    var distanceBotton = distancePointLine(bottonLeft, bottonRight, ball.position);
-    var distanceTop = distancePointLine(topLeft, topRight, ball.position);
-    var distanceLeft = distancePointLine(bottonLeft, topLeft, ball.position);
-    var distanceRight = distancePointLine(bottonRight, topRight, ball.position);
+    var distanceBotton = distancePointLine(bottonLeft, bottonRight, ball?.position);
+    var distanceTop = distancePointLine(topLeft, topRight, ball?.position);
+    var distanceLeft = distancePointLine(bottonLeft, topLeft, ball?.position);
+    var distanceRight = distancePointLine(bottonRight, topRight, ball?.position);
     if (
       (distanceBotton < distanceLeft && distanceBotton < distanceRight) ||
       (distanceTop < distanceLeft && distanceTop < distanceRight)
@@ -704,10 +717,10 @@ function isBottonTopBrickCollision(brick) {
 }
 
 function is2BottonTopBrickCollision(brick) {
-  var ballX = secondBall.position.x;
-  var ballY = secondBall.position.y;
-  var brickX = brick.position.x;
-  var brickY = brick.position.y;
+  var ballX = secondBall?.position.x;
+  var ballY = secondBall?.position.y;
+  var brickX = brick?.position.x;
+  var brickY = brick?.position.y;
 
   var halfBrickWidth = brick.geometry.parameters.width / 2;
   var halfBrickHeight = brick.geometry.parameters.height / 2;
@@ -722,10 +735,10 @@ function is2BottonTopBrickCollision(brick) {
     var topRight = new THREE.Vector2(brickX + halfBrickWidth, brickY - halfBrickHeight);
     var bottonLeft = new THREE.Vector2(brickX - halfBrickWidth, brickY + halfBrickHeight);
     var bottonRight = new THREE.Vector2(brickX + halfBrickWidth, brickY + halfBrickHeight);
-    var distanceBotton = distancePointLine(bottonLeft, bottonRight, secondBall.position);
-    var distanceTop = distancePointLine(topLeft, topRight, secondBall.position);
-    var distanceLeft = distancePointLine(bottonLeft, topLeft, secondBall.position);
-    var distanceRight = distancePointLine(bottonRight, topRight, secondBall.position);
+    var distanceBotton = distancePointLine(bottonLeft, bottonRight, secondBall?.position);
+    var distanceTop = distancePointLine(topLeft, topRight, secondBall?.position);
+    var distanceLeft = distancePointLine(bottonLeft, topLeft, secondBall?.position);
+    var distanceRight = distancePointLine(bottonRight, topRight, secondBall?.position);
     if (
       (distanceBotton < distanceLeft && distanceBotton < distanceRight) ||
       (distanceTop < distanceLeft && distanceTop < distanceRight)
@@ -740,10 +753,10 @@ function is2BottonTopBrickCollision(brick) {
 
 // Função para verificar colisão com a parte lateral do tijolo
 function isSideBrickCollision(brick) {
-  var ballX = ball.position.x;
-  var ballY = ball.position.y;
-  var brickX = brick.position.x;
-  var brickY = brick.position.y;
+  var ballX = ball?.position.x;
+  var ballY = ball?.position.y;
+  var brickX = brick?.position.x;
+  var brickY = brick?.position.y;
 
   var halfBrickWidth = brick.geometry.parameters.width / 2;
   var halfBrickHeight = brick.geometry.parameters.height / 2;
@@ -758,10 +771,10 @@ function isSideBrickCollision(brick) {
     var topRight = new THREE.Vector2(brickX + halfBrickWidth, brickY - halfBrickHeight);
     var bottonLeft = new THREE.Vector2(brickX - halfBrickWidth, brickY + halfBrickHeight);
     var bottonRight = new THREE.Vector2(brickX + halfBrickWidth, brickY + halfBrickHeight);
-    var distanceBotton = distancePointLine(bottonLeft, bottonRight, ball.position);
-    var distanceTop = distancePointLine(topLeft, topRight, ball.position);
-    var distanceLeft = distancePointLine(bottonLeft, topLeft, ball.position);
-    var distanceRight = distancePointLine(bottonRight, topRight, ball.position);
+    var distanceBotton = distancePointLine(bottonLeft, bottonRight, ball?.position);
+    var distanceTop = distancePointLine(topLeft, topRight, ball?.position);
+    var distanceLeft = distancePointLine(bottonLeft, topLeft, ball?.position);
+    var distanceRight = distancePointLine(bottonRight, topRight, ball?.position);
     if (
       (distanceLeft < distanceTop && distanceLeft < distanceBotton) ||
       (distanceRight < distanceTop && distanceRight < distanceBotton)
@@ -773,10 +786,10 @@ function isSideBrickCollision(brick) {
   return false;
 }
 function is2SideBrickCollision(brick) {
-  var ballX = secondBall.position.x;
-  var ballY = secondBall.position.y;
-  var brickX = brick.position.x;
-  var brickY = brick.position.y;
+  var ballX = secondBall?.position.x;
+  var ballY = secondBall?.position.y;
+  var brickX = brick?.position.x;
+  var brickY = brick?.position.y;
 
   var halfBrickWidth = brick.geometry.parameters.width / 2;
   var halfBrickHeight = brick.geometry.parameters.height / 2;
@@ -791,10 +804,10 @@ function is2SideBrickCollision(brick) {
     var topRight = new THREE.Vector2(brickX + halfBrickWidth, brickY - halfBrickHeight);
     var bottonLeft = new THREE.Vector2(brickX - halfBrickWidth, brickY + halfBrickHeight);
     var bottonRight = new THREE.Vector2(brickX + halfBrickWidth, brickY + halfBrickHeight);
-    var distanceBotton = distancePointLine(bottonLeft, bottonRight, secondBall.position);
-    var distanceTop = distancePointLine(topLeft, topRight, secondBall.position);
-    var distanceLeft = distancePointLine(bottonLeft, topLeft, secondBall.position);
-    var distanceRight = distancePointLine(bottonRight, topRight, secondBall.position);
+    var distanceBotton = distancePointLine(bottonLeft, bottonRight, secondBall?.position);
+    var distanceTop = distancePointLine(topLeft, topRight, secondBall?.position);
+    var distanceLeft = distancePointLine(bottonLeft, topLeft, secondBall?.position);
+    var distanceRight = distancePointLine(bottonRight, topRight, secondBall?.position);
     if (
       (distanceLeft < distanceTop && distanceLeft < distanceBotton) ||
       (distanceRight < distanceTop && distanceRight < distanceBotton)
@@ -860,7 +873,7 @@ function createPowerUp() {
     })
     powerUp = new THREE.Mesh(powerGeometry, powerMaterial);
     powerUp.castShadow = true;
-    powerUp.position.set(ball.position.x, ball.position.y, 0.2);
+    powerUp?.position.set(ball?.position.x, ball?.position.y, 0.2);
     powerUp.castShadow = true;
     scene.add(powerUp);
     // Ajuste a direção da segunda bola
@@ -883,7 +896,7 @@ function createBall() {
     specular: ("rgb(255,255,255)")
   })
   ball = new THREE.Mesh(new THREE.SphereGeometry(ball_radius, 16, 16), ballMaterial);
-  ball.position.set(0, ball_pos_y, 0.2);
+  ball?.position.set(0, ball_pos_y, 0.2);
   bbBall = new THREE.Box3().setFromObject(ball);
   ball.castShadow = true;
   scene.add(ball);
@@ -925,8 +938,8 @@ function createHitter() {
   // CSG holders
   let csgObject, boxCSG, cylinderCSG
 
-  cylinder.position.set(0, -2, 0.2)
-  boxMesh.position.set(0, -2.3, 0.2)
+  cylinder?.position.set(0, -2, 0.2)
+  boxMesh?.position.set(0, -2.3, 0.2)
 
   // Object - Cube SUBTRACT Cylinder
   updateObject(boxMesh) // update internal coords
@@ -936,7 +949,7 @@ function createHitter() {
   csgObject = cylinderCSG.subtract(boxCSG) // Execute subtraction
   hitter = CSG.toMesh(csgObject, auxMat)
   hitter.material = new THREE.MeshLambertMaterial({ color: ("rgb(255,240,250)") });
-  hitter.position.set(0, -7.45, 0.2)
+  hitter?.position.set(0, -7.45, 0.2)
   bbHitter = new THREE.Box3().setFromObject(hitter)
   hitter.castShadow = true;
   hitter.material.map = orange;
@@ -950,7 +963,7 @@ function createBricks() {
       brickWidth = field_w / columns - 0.05,
       halfBrickWidth = brickWidth / 2;
 
-    var colors = [0x80D010, 0xFC74B4, 0xFC9838, 0x0070EC, 0xD42700, 0xBCBCBC];
+    var colors = [0x80D010, 0xFC74B4, 0xFFD700, 0x0070EC, 0xD42700, 0xBCBCBC];
 
     bricks = new Array(rows);
 
@@ -970,12 +983,12 @@ function createBricks() {
         bricksMaterial = new THREE.MeshLambertMaterial(setDefaultMaterial(color));
 
         //textura no ultimo bloco
-        if(i == rows - 1){
+        if (i == rows - 1) {
           bricksMaterial.map = tile;
         }
 
         bricks[i][j] = new THREE.Mesh(bricksGeometry, bricksMaterial);
-        bricks[i][j].position.set(-halfFieldWidth + halfBrickWidth + j * (brickWidth + 0.05), 3 + i * 0.45, 0.2);
+        bricks[i][j]?.position.set(-halfFieldWidth + halfBrickWidth + j * (brickWidth + 0.05), 3 + i * 0.45, 0.2);
         bricks[i][j].castShadow = true;
         scene.add(bricks[i][j]);
       }
@@ -986,27 +999,27 @@ function createBricks() {
     var halfBrickWidth = brickWidth / 2;
     const matriz_colors = [
       [0xBCBCBC, 0xBCBCBC],
-      [0x0070EC, 0xFC9838],
+      [0x0070EC, 0xFFD700],
       [0x80D010, 0x80D010],
-      [0xFC74B4, 0xFC9838],
+      [0xFC74B4, 0xFFD700],
       [0xD42700, 0xD42700],
-      [0xFC74B4, 0xFC9838],
+      [0xFC74B4, 0xFFD700],
       [0x80D010, 0x80D010],
-      [0x0070EC, 0xFC9838],
+      [0x0070EC, 0xFFD700],
       [0xBCBCBC, 0xBCBCBC],
-      [0xFC9838, 0x0070EC],
+      [0xFFD700, 0x0070EC],
       [0x80D010, 0x80D010],
-      [0xFC74B4, 0xFC9838],
+      [0xFC74B4, 0xFFD700],
       [0xD42700, 0xD42700],
-      [0xFC9838, 0xFC74B4],
+      [0xFFD700, 0xFC74B4],
       [0x80D010, 0x80D010],
-      [0xFC9838, 0x0070EC],
+      [0xFFD700, 0x0070EC],
       [0xBCBCBC, 0xBCBCBC],
-      [0xFC9838, 0x0070EC],
+      [0xFFD700, 0x0070EC],
       [0x80D010, 0x80D010],
-      [0xFC9838, 0xFC74B4],
+      [0xFFD700, 0xFC74B4],
       [0xD42700, 0xD42700],
-      [0xFC9838, 0xFC74B4]
+      [0xFFD700, 0xFC74B4]
     ];
     var spaceWidth = spacing; // Largura do espaço entre os blocos
     var x = 0;
@@ -1029,28 +1042,28 @@ function createBricks() {
             };
             if (j < 4) {
               // Primeiro bloco à esquerda
-              bricksMaterial= new THREE.MeshLambertMaterial(setDefaultMaterial(color));
+              bricksMaterial = new THREE.MeshLambertMaterial(setDefaultMaterial(color));
               //textura
-              if(color == 0xBCBCBC){
+              if (color == 0xBCBCBC) {
                 bricksMaterial.map = tile;
               }
               bricks[i][j] = new THREE.Mesh(new THREE.BoxGeometry(brickWidth, 0.4, 0.1), bricksMaterial);
               var topPosition = 1 + (rows - 1) * 0.45; // Posição vertical do bloco superior
-              bricks[i][j].position.set((j * (brickWidth + spaceWidth)) - (field_w / 2) + halfBrickWidth, topPosition - i * 0.45, 0.2);
+              bricks[i][j]?.position.set((j * (brickWidth + spaceWidth)) - (field_w / 2) + halfBrickWidth, topPosition - i * 0.45, 0.2);
             } else if (j == 4) {
               // Espaço no meio
               continue; // Pula a posição 4
             } else {
               // Segundo bloco à direita
               var rightBlockColumn = j - 5;
-              bricksMaterial= new THREE.MeshLambertMaterial(setDefaultMaterial(color));
-               //textura
-              if(color == 0xBCBCBC){
+              bricksMaterial = new THREE.MeshLambertMaterial(setDefaultMaterial(color));
+              //textura
+              if (color == 0xBCBCBC) {
                 bricksMaterial.map = tile;
               }
               bricks[i][j] = new THREE.Mesh(new THREE.BoxGeometry(brickWidth, 0.4, 0.1), bricksMaterial);
               var topPosition = 1 + (rows - 1) * 0.45; // Posição vertical do bloco superior
-              bricks[i][j].position.set(((rightBlockColumn + 0.3) * (brickWidth + spaceWidth)) + halfBrickWidth + spaceWidth, topPosition - i * 0.45, 0.2);
+              bricks[i][j]?.position.set(((rightBlockColumn + 0.3) * (brickWidth + spaceWidth)) + halfBrickWidth + spaceWidth, topPosition - i * 0.45, 0.2);
             }
             bricks[i][j].castShadow = true;
             scene.add(bricks[i][j]);
@@ -1102,13 +1115,13 @@ function createBricks() {
 
         if (j % 2 === 0) {
           bricks[i][j] = new THREE.Mesh(bricksGeometry, bricksMaterial);
-          bricks[i][j].position.set(-halfFieldWidth + halfBrickWidth + j * (brickWidth + 0.05), 3 + i * 0.45, 0.2);
+          bricks[i][j]?.position.set(-halfFieldWidth + halfBrickWidth + j * (brickWidth + 0.05), 3 + i * 0.45, 0.2);
           bricks[i][j].castShadow = true;
           scene.add(bricks[i][j]);
         }
         else if (j % 2 != 0 && j != 1 && j != 9 && i === 7) {
           bricks[i][j] = new THREE.Mesh(bricksGeometry, bricksMaterial);
-          bricks[i][j].position.set(-halfFieldWidth + halfBrickWidth + j * (brickWidth + 0.05), 3 + i * 0.45, 0.2);
+          bricks[i][j]?.position.set(-halfFieldWidth + halfBrickWidth + j * (brickWidth + 0.05), 3 + i * 0.45, 0.2);
           bricks[i][j].castShadow = true;
           scene.add(bricks[i][j]);
         }
@@ -1152,7 +1165,7 @@ function clearScene() {
     hitter = null;
   }
   // Remove a espaconave
-  if(space){
+  if (space) {
     scene.remove(space);
     space = null;
   }
@@ -1184,24 +1197,24 @@ function onMouseMove(event) {
   if (intersects.length > 0) {
     let point = intersects[0].point; // Pick the point where interception occurrs
     if (point.x >= -(field_w / 2) + hitter_w / 2 && point.x <= field_w / 2 - hitter_w / 2) {
-      hitter.position.set(point.x, -7.45, 0.2);
-      space.position.set(point.x, -8.0, 0.2);
+      hitter?.position.set(point.x, -7.45, 0.2);
+      space?.position.set(point.x, -8.0, 0.2);
       if (!running) {
-        ball.position.set(point.x, ball_pos_y, 0.2);
+        ball?.position.set(point.x, ball_pos_y, 0.2);
       }
     } else {
       if (point.x < -(field_w / 2) + hitter_w / 2) {
-        hitter.position.set(-field_w / 2 + hitter_w / 2, -7.45, 0.2);
-        space.position.set(-field_w / 2 + hitter_w / 2, -8.0, 0.2);
+        hitter?.position.set(-field_w / 2 + hitter_w / 2, -7.45, 0.2);
+        space?.position.set(-field_w / 2 + hitter_w / 2, -8.0, 0.2);
         if (!running) {
-          ball.position.set(-field_w / 2 + hitter_w / 2, ball_pos_y, 0.2);
+          ball?.position.set(-field_w / 2 + hitter_w / 2, ball_pos_y, 0.2);
         }
       } else {
         if (point.x > field_w / 2 - hitter_w / 2) {
-          hitter.position.set(field_w / 2 - hitter_w / 2, -7.45, 0.2);
-          space.position.set(field_w / 2 - hitter_w / 2, -8.0, 0.2);
+          hitter?.position.set(field_w / 2 - hitter_w / 2, -7.45, 0.2);
+          space?.position.set(field_w / 2 - hitter_w / 2, -8.0, 0.2);
           if (!running) {
-            ball.position.set(field_w / 2 - hitter_w / 2, ball_pos_y, 0.2);
+            ball?.position.set(field_w / 2 - hitter_w / 2, ball_pos_y, 0.2);
           }
         }
       }
@@ -1260,7 +1273,7 @@ function onKeyDown(event) {
         isPaused = true;
       } else {
         // Retorna à posição inicial
-        cameraPerspective.position.set(0, 0, 30);
+        cameraPerspective?.position.set(0, 0, 30);
         cameraPerspective.lookAt(new THREE.Vector3(0, 0, 0));
 
         // Reseta a órbita
@@ -1296,7 +1309,7 @@ function onKeyDown(event) {
       nivel = 3;
       rows = 11;
       columns = 11;
-      cont = rows * columns;
+      cont = 69;
       bricksInfo = new Array(rows);
 
       for (var i = 0; i < rows; i++) {
@@ -1354,57 +1367,53 @@ function distancePointLine(pointA, pointB, pointC) {
     Math.sqrt((pointB.x - pointA.x) * (pointB.x - pointA.x) + (pointB.y - pointA.y) * (pointB.y - pointA.y));
   return distance;
 }
-function loadOBJFile(modelPath, modelName, visibility, desiredScale)
-{
-  var mtlLoader = new MTLLoader( );
-  mtlLoader.setPath( modelPath );
-  mtlLoader.load( modelName + '.mtl', function ( materials ) {
-      materials.preload();
+function loadOBJFile(modelPath, modelName, visibility, desiredScale) {
+  var mtlLoader = new MTLLoader();
+  mtlLoader.setPath(modelPath);
+  mtlLoader.load(modelName + '.mtl', function (materials) {
+    materials.preload();
 
-      var objLoader = new OBJLoader( );
-      objLoader.setMaterials(materials);
-      objLoader.setPath(modelPath);
-      objLoader.load( modelName + ".obj", function ( obj ) {
-         obj.name = modelName;
-         obj.visible = visibility;
-         obj.traverse( function (child)
-         {
-            if( child.isMesh ) child.castShadow = true;
-            if( child.material ) child.material.side = THREE.DoubleSide; 
-         });
-
-         var obj = normalizeAndRescale(obj, desiredScale);
-         var obj = fixPosition(obj);
-
-         space = obj;
-
-         scene.add ( space );
-         assetManager[modelName] = obj;
+    var objLoader = new OBJLoader();
+    objLoader.setMaterials(materials);
+    objLoader.setPath(modelPath);
+    objLoader.load(modelName + ".obj", function (obj) {
+      obj.name = modelName;
+      obj.visible = visibility;
+      obj.traverse(function (child) {
+        if (child.isMesh) child.castShadow = true;
+        if (child.material) child.material.side = THREE.DoubleSide;
       });
+
+      var obj = normalizeAndRescale(obj, desiredScale);
+      var obj = fixPosition(obj);
+
+      space = obj;
+
+      scene.add(space);
+      assetManager[modelName] = obj;
+    });
   });
 
 }
 
 // Normalize scale and multiple by the newScale
-function normalizeAndRescale(obj, newScale)
-{
-  var scale = getMaxSize(obj); 
-  obj.scale.set(newScale * (2.0/scale),
-                newScale * (1.0/scale),
-                newScale * (1.0/scale));
+function normalizeAndRescale(obj, newScale) {
+  var scale = getMaxSize(obj);
+  obj.scale.set(newScale * (2.0 / scale),
+    newScale * (1.0 / scale),
+    newScale * (1.0 / scale));
   return obj;
 }
 
-function fixPosition(obj)
-{
+function fixPosition(obj) {
   // Fix position of the object over the ground plane
-  var box = new THREE.Box3().setFromObject( obj );
-  obj.rotateX(Math.PI/2);
+  var box = new THREE.Box3().setFromObject(obj);
+  obj.rotateX(Math.PI / 2);
   obj.rotateY(Math.PI);
-  obj.position.set(0, -8.0, 0.2)
-  if(box.min.y > 0)
+  obj?.position.set(0, -8.0, 0.2)
+  if (box.min.y > 0)
     obj.translateY(-box.min.y);
   else
-    obj.translateY(-1*box.min.y);
+    obj.translateY(-1 * box.min.y);
   return obj;
 }
