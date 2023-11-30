@@ -104,11 +104,12 @@ cameraPerspective.lookAt(0, 0, 0);
 var objects = [];
 var geometryRaycaster = new THREE.BoxGeometry(2, 1.8, 0.1);    
 
-var objectRaycaster = new THREE.Mesh(geometryRaycaster, new THREE.MeshBasicMaterial({ color: 0xeeeeee, transparent: false, opacity: 0.5 }));
+var materialRaycaster = new THREE.MeshBasicMaterial({ color: 0xeeeeee, transparent: true, opacity: 0.4 });
+var objectRaycaster = new THREE.Mesh(geometryRaycaster, materialRaycaster);
 objectRaycaster.castShadow = true;
 objectRaycaster.receiveShadow = true;
 
-objectRaycaster.position.set(0, -7.05, -1.0);
+objectRaycaster.position.set(0, -7.75, 0.2);
 
 scene.add(objectRaycaster);
 objects.push(objectRaycaster);
@@ -912,6 +913,13 @@ function createPowerUp() {
     powerUp.$stopped = false;
   }
 }
+function createBBHelper(bb, color)
+{
+   // Create a bounding box helper
+   let helper = new THREE.Box3Helper( bb, color );
+   scene.add( helper );
+   return helper;
+}
 
 //Criação da bola
 function createBall() {
@@ -923,6 +931,7 @@ function createBall() {
   ball = new THREE.Mesh(new THREE.SphereGeometry(ball_radius, 16, 16), ballMaterial);
   ball?.position.set(0, ball_pos_y, 0.2);
   bbBall = new THREE.Box3().setFromObject(ball);
+  //let bbHelper2 = createBBHelper(bbBall, 'yellow')
   ball.castShadow = true;
   scene.add(ball);
 }
@@ -976,6 +985,7 @@ function createHitter() {
   hitter.material = new THREE.MeshLambertMaterial({ color: ("rgb(255,240,250)") });
   hitter?.position.set(0, -7.45, 0.2)
   bbHitter = new THREE.Box3().setFromObject(hitter)
+  //let bbHelper1 = createBBHelper(bbHitter, 'yellow')
   hitter.castShadow = true;
   hitter.material.map = orange;
   scene.add(hitter)
@@ -1214,7 +1224,7 @@ dragControl.addEventListener('drag', function (event) {
   if (objectRaycaster.position.x >= -(field_w / 2) + hitter_w / 2 && objectRaycaster.position.x <= field_w / 2 - hitter_w / 2) {
     hitter?.position.set(objectRaycaster.position.x, -7.45, 0.2);
     space?.position.set(objectRaycaster.position.x, -8.0, 0.2);
-    objectRaycaster.position.set(objectRaycaster.position.x, -7.05, -1.0);
+    objectRaycaster.position.set(objectRaycaster.position.x, -7.75, 0.2);
     if (!running) {
       ball?.position.set(objectRaycaster.position.x, ball_pos_y, 0.2);
     }
@@ -1222,7 +1232,7 @@ dragControl.addEventListener('drag', function (event) {
     if (objectRaycaster.position.x < -(field_w / 2) + hitter_w / 2) {
       hitter?.position.set(-field_w / 2 + hitter_w / 2, -7.45, 0.2);
       space?.position.set(-field_w / 2 + hitter_w / 2, -8.0, 0.2);
-      objectRaycaster.position.set(-field_w / 2 + hitter_w / 2, -7.05, -1.0);
+      objectRaycaster.position.set(-field_w / 2 + hitter_w / 2, -7.75, 0.2);
       if (!running) {
         ball?.position.set(-field_w / 2 + hitter_w / 2, ball_pos_y, 0.2);
       }
@@ -1230,14 +1240,17 @@ dragControl.addEventListener('drag', function (event) {
       if (objectRaycaster.position.x > field_w / 2 - hitter_w / 2) {
         hitter?.position.set(field_w / 2 - hitter_w / 2, -7.45, 0.2);
         space?.position.set(field_w / 2 - hitter_w / 2, -8.0, 0.2);
-        objectRaycaster.position.set(field_w / 2 - hitter_w / 2, -7.05, -1.0);
+        objectRaycaster.position.set(field_w / 2 - hitter_w / 2, -7.75, 0.2);
         if (!running) {
           ball?.position.set(field_w / 2 - hitter_w / 2, ball_pos_y, 0.2);
         }
       }
     }
   }
-});
+  bbHitter.setFromObject(hitter); 
+}
+
+);
 
 function onMouseMove(event) {
   let pointer = new THREE.Vector2();
@@ -1392,7 +1405,7 @@ function restartGame() {
   createSceneObjects();
   running = false;
   velocity = initialVelocity;
-  objectRaycaster.position.set(0, -7.05, -1.0);
+  objectRaycaster.position.set(0, -7.75, 0.2);
   if (isPaused) {
     isPaused = false;
     render();
