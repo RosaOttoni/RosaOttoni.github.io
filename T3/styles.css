@@ -1,0 +1,44 @@
+/* style.css */
+body {
+  margin: 0;
+  padding: 0;
+}
+
+canvas {
+  display: block;
+}
+
+body {
+  background-color: #272727;
+  color: #fff;
+  font-family: 'Arial', sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  margin: 0;
+}
+
+#start-screen {
+  text-align: center;
+}
+
+h1 {
+  font-size: 2.5em;
+  margin-bottom: 20px;
+}
+
+button {
+  background-color: #3498db;
+  color: #fff;
+  padding: 15px 30px;
+  font-size: 1.2em;
+  cursor: pointer;
+  border: none;
+  border-radius: 8px;
+  text-decoration: none;
+}
+
+button:hover {
+  background-color: #2980b9;
+}

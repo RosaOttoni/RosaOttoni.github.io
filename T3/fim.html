@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Início - Trabalho 3 - Computacao Grafica</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      background-color: #ffffff;
+      color: #000000;
+      font-family: 'Arial', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    #start-screen {
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 2em;
+      margin-bottom: 20px;
+    }
+
+    button {
+      background-color: #47db34;
+      color: #fff;
+      padding: 10px 20px;
+      font-size: 1em;
+      cursor: pointer;
+      border: none;
+      border-radius: 5px;
+    }
+
+    button:hover {
+      background-color: #33b929;
+    }
+
+    #loading {
+      display: none;
+      text-align: center;
+    }
+
+    #loading img {
+      display: block;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Tela de Fim -->
+  <div id="start-screen">
+    <h1>Uhul, fim de jogo!</h1>
+    <p>Grupo: <br>
+      * Andressa Augusta Ferrugini de Oliveira - 201665251C
+      <br>
+      * Camila Correa Vieira - 201735006
+      <br>
+      * Rosa Maria Ottoni Fernandes Maciel - 202025506
+    </p>
+    <button id="start-button" type="button" onclick="startGame()">Reiniciar Jogo</button>
+    <div id="loading">
+      <img src="ballt.gif" alt="Carregando...">
+      Carregando...
+    </div>
+  </div>
+
+  <!-- Scripts do Three.js e seu código principal -->
+  <script async src="https://unpkg.com/es-module-shims@1.3.6/dist/es-module-shims.js"></script>
+  <script type="importmap">
+    { "imports": { "three": "../build/three.module.js" } }
+  </script>
+  <script src="./brickBreaker.js"></script>
+
+  <script>
+    function startGame() {
+      // Oculta o botão e exibe o loading
+      document.getElementById("start-button").style.display = "none";
+      document.getElementById("loading").style.display = "block";
+
+      // Simula um carregamento por 3 segundos
+      setTimeout(function () {
+        // Exibe novamente o botão e oculta o loading após 3 segundos
+        document.getElementById("start-button").style.display = "block";
+        document.getElementById("loading").style.display = "none";
+        // Redireciona para a página brickBreaker.html após 3 segundos
+        window.location.href = "brickBreaker.html";
+      }, 3000);
+    }
+  </script>
+</body>
+
+</html>
