@@ -12,6 +12,7 @@ import { OrbitControls } from '../build/jsm/controls/OrbitControls.js';
 import { OBJLoader } from '../build/jsm/loaders/OBJLoader.js';
 import { MTLLoader } from '../build/jsm/loaders/MTLLoader.js';
 import { Buttons } from "../libs/other/buttons.js";        
+import {DragControls} from '../build/jsm/controls/DragControls.js';
 
 
 // Inicialização de variáveis importantes
@@ -52,9 +53,7 @@ var orange = textureLoader2.load('texture_orange.jpeg');
 
 //botões
 var buttons = new Buttons(onButtonDown, onButtonUp);
-
 var pressedA = false;        
-var pressedB = false;
 
 scene = new THREE.Scene(); // Cria a cena principal
 // Configure a cena para usar a textura da skybox como fundo
@@ -99,6 +98,23 @@ cameraPerspective = new THREE.PerspectiveCamera(
 );
 cameraPerspective?.position.set(0, -20, 20);
 cameraPerspective.lookAt(0, 0, 0);
+
+//Raycaster mobile
+//Raycaster mobile
+var objects = [];
+var geometryRaycaster = new THREE.BoxGeometry(2, 1.8, 0.1);    
+
+var objectRaycaster = new THREE.Mesh(geometryRaycaster, new THREE.MeshBasicMaterial({ color: 0xeeeeee, transparent: false, opacity: 0.5 }));
+objectRaycaster.castShadow = true;
+objectRaycaster.receiveShadow = true;
+
+objectRaycaster.position.set(0, -7.05, -1.0);
+
+scene.add(objectRaycaster);
+objects.push(objectRaycaster);
+var dragControl = new DragControls(objects, cameraPerspective, renderer.domElement);
+dragControl.activate();
+
 
 function onWindowResize(camera, renderer) {
   var w = window.innerWidth;
@@ -455,6 +471,7 @@ function createSecondBallWithDifferentDirection() {
 
 //função que atualiza a função da bola
 function updateBallPosition() {
+  console.log(canCollideWithHitter);  
   if (ball) {
     var ballPos = ball?.position;
     ballPos.x += ball.$velocity.x;
@@ -836,8 +853,8 @@ function finalizarJogo() {
 // Função para criar os objetos da cena
 createSceneObjects();
 // Event listeners para o mouse, clique do mouse e teclado
-window.addEventListener("mousemove", onMouseMove);
-renderer.domElement.addEventListener("mousedown", onClick, false);
+//window.addEventListener("mousemove", onMouseMove);
+//renderer.domElement.addEventListener("mousedown", onClick, false);
 document.addEventListener("keydown", onKeyDown, false);
 
 // Event listener para redimensionar a janela
@@ -1193,6 +1210,35 @@ function clearScene() {
   }
 }
 
+dragControl.addEventListener('drag', function (event) {
+  if (objectRaycaster.position.x >= -(field_w / 2) + hitter_w / 2 && objectRaycaster.position.x <= field_w / 2 - hitter_w / 2) {
+    hitter?.position.set(objectRaycaster.position.x, -7.45, 0.2);
+    space?.position.set(objectRaycaster.position.x, -8.0, 0.2);
+    objectRaycaster.position.set(objectRaycaster.position.x, -7.05, -1.0);
+    if (!running) {
+      ball?.position.set(objectRaycaster.position.x, ball_pos_y, 0.2);
+    }
+  } else {
+    if (objectRaycaster.position.x < -(field_w / 2) + hitter_w / 2) {
+      hitter?.position.set(-field_w / 2 + hitter_w / 2, -7.45, 0.2);
+      space?.position.set(-field_w / 2 + hitter_w / 2, -8.0, 0.2);
+      objectRaycaster.position.set(-field_w / 2 + hitter_w / 2, -7.05, -1.0);
+      if (!running) {
+        ball?.position.set(-field_w / 2 + hitter_w / 2, ball_pos_y, 0.2);
+      }
+    } else {
+      if (objectRaycaster.position.x > field_w / 2 - hitter_w / 2) {
+        hitter?.position.set(field_w / 2 - hitter_w / 2, -7.45, 0.2);
+        space?.position.set(field_w / 2 - hitter_w / 2, -8.0, 0.2);
+        objectRaycaster.position.set(field_w / 2 - hitter_w / 2, -7.05, -1.0);
+        if (!running) {
+          ball?.position.set(field_w / 2 - hitter_w / 2, ball_pos_y, 0.2);
+        }
+      }
+    }
+  }
+});
+
 function onMouseMove(event) {
   let pointer = new THREE.Vector2();
   pointer.x = (event.clientX / w) * 2 - 1;
@@ -1346,6 +1392,7 @@ function restartGame() {
   createSceneObjects();
   running = false;
   velocity = initialVelocity;
+  objectRaycaster.position.set(0, -7.05, -1.0);
   if (isPaused) {
     isPaused = false;
     render();
@@ -1431,6 +1478,14 @@ function onButtonDown(event) {
   {
     case "A":
       pressedA = true;
+      if (running === false) {
+        startTime = Date.now(); // Registra o tempo inicial
+        running = true;
+        canCollideWithHitter = false;
+        setTimeout(() => {
+          canCollideWithHitter = true;
+        }, 100);
+      }
     break;    
     case "full":
       buttons.setFullScreen();
@@ -1439,5 +1494,6 @@ function onButtonDown(event) {
 }
 
 function onButtonUp(event) {
-  pressedA = pressedB = false;
+  pressedA = false;
 }
+
